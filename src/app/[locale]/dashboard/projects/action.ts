@@ -9,15 +9,15 @@ import { prisma } from "~/lib/server/db";
 interface CreateProjectPayload {
   name: string;
   packageType: PackageType;
-  wherePlayed?: string;
-  stakes?: string;
-  yourHand?: string;
-  opponentHand?: string;
-  flop?: string;
-  turn?: string;
-  river?: string;
-  voiceoverUrl?: string;
-  videoUrl?: string;
+  wherePlayed?: string | null;
+  stakes?: string | null;
+  yourHand?: string | null;
+  opponentHand?: string | null;
+  flop?: string | null;
+  turn?: string | null;
+  river?: string | null;
+  voiceoverUrl?: string | null;
+  videoUrl?: string | null;
 }
 
 export async function checkIfFreePlanLimitReached() {

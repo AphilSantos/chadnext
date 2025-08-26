@@ -24,13 +24,24 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { toast } from "~/hooks/use-toast";
 import { FreePlanLimitError } from "~/lib/utils";
 import { checkIfFreePlanLimitReached, createProject } from "./action";
 
+// Poker project schema
 export const projectSchema = z.object({
   name: z.string().min(1, { message: "Please enter a project name." }),
-  domain: z.string().min(1, { message: "Please enter a project domain." }),
+  packageType: z.enum(["SHORT", "FULL", "CREDITS"]),
+  wherePlayed: z.string().nullable(),
+  stakes: z.string().nullable(),
+  yourHand: z.string().nullable(),
+  opponentHand: z.string().nullable(),
+  flop: z.string().nullable(),
+  turn: z.string().nullable(),
+  river: z.string().nullable(),
+  voiceoverUrl: z.string().nullable(),
+  videoUrl: z.string().nullable(),
 });
 
 export type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -41,7 +52,16 @@ export default function CreateProjectModal() {
     resolver: zodResolver(projectSchema),
     defaultValues: {
       name: "",
-      domain: "",
+      packageType: "SHORT",
+      wherePlayed: null,
+      stakes: null,
+      yourHand: null,
+      opponentHand: null,
+      flop: null,
+      turn: null,
+      river: null,
+      voiceoverUrl: null,
+      videoUrl: null,
     },
   });
 
@@ -71,6 +91,7 @@ export default function CreateProjectModal() {
       });
     }
   }
+  
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -79,49 +100,204 @@ export default function CreateProjectModal() {
           className="flex flex-col items-center justify-center gap-y-2.5 p-8 text-center hover:bg-accent"
         >
           <Button size="icon" variant="ghost">
-            <Icons.projectPlus className="h-8 w-8" />
+            <Icons.add className="h-8 w-8" />
           </Button>
-          <p className="text-xl font-medium">Create a project</p>
+          <p className="text-xl font-medium">Create a new project</p>
         </Card>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Create Project</DialogTitle>
+          <DialogTitle>Create New Poker Project</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Project Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="XYZ" {...field} />
+                    <Input placeholder="My Poker Hand" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
-              name="domain"
+              name="packageType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Domain</FormLabel>
-                  <FormControl>
-                    <Input placeholder="xyz.com" {...field} />
-                  </FormControl>
+                  <FormLabel>Package Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a package" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="SHORT">Short Clip ($100)</SelectItem>
+                      <SelectItem value="FULL">Full Project + Shorts ($500)</SelectItem>
+                      <SelectItem value="CREDITS">Credits Package ($2000)</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <Button disabled={form.formState.isSubmitting} type="submit">
-                {form.formState.isSubmitting && (
-                  <Icons.spinner className={"mr-2 h-5 w-5 animate-spin"} />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="wherePlayed"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Where You Played</FormLabel>
+                    <FormControl>
+                      <Input placeholder="PokerStars, Live Casino, etc." {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-                Create
+              />
+
+              <FormField
+                control={form.control}
+                name="stakes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stakes</FormLabel>
+                    <FormControl>
+                      <Input placeholder="$1/$2, $5/$10, etc." {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="yourHand"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Your Hand</FormLabel>
+                    <FormControl>
+                      <Input placeholder="A♠ K♠" {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="opponentHand"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Opponent's Hand (if known)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Q♣ Q♦" {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="flop"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Flop</FormLabel>
+                    <FormControl>
+                      <Input placeholder="A♣ 7♠ 2♥" {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="turn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Turn</FormLabel>
+                    <FormControl>
+                      <Input placeholder="K♦" {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="river"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>River</FormLabel>
+                    <FormControl>
+                      <Input placeholder="J♠" {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="voiceoverUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Voiceover URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://drive.google.com/..." {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="videoUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Video URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://drive.google.com/..." {...field} value={field.value || ""} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={form.formState.isSubmitting}
+                type="submit"
+              >
+                {form.formState.isSubmitting && (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Create Project
               </Button>
             </DialogFooter>
           </form>

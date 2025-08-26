@@ -19,31 +19,77 @@ import { toast } from "~/hooks/use-toast";
 import { updateProjectById } from "../action";
 import * as z from "zod";
 
-// Poker project schema
+// Poker project schema - using nullable fields to match database
 const pokerProjectSchema = z.object({
   name: z.string().min(1, { message: "Please enter a project name." }),
   packageType: z.enum(["SHORT", "FULL", "CREDITS"]),
-  wherePlayed: z.string().optional(),
-  stakes: z.string().optional(),
-  yourHand: z.string().optional(),
-  opponentHand: z.string().optional(),
-  flop: z.string().optional(),
-  turn: z.string().optional(),
-  river: z.string().optional(),
-  voiceoverUrl: z.string().optional(),
-  videoUrl: z.string().optional(),
+  wherePlayed: z.string().nullable(),
+  stakes: z.string().nullable(),
+  yourHand: z.string().nullable(),
+  opponentHand: z.string().nullable(),
+  flop: z.string().nullable(),
+  turn: z.string().nullable(),
+  river: z.string().nullable(),
+  voiceoverUrl: z.string().nullable(),
+  videoUrl: z.string().nullable(),
 });
 
 type PokerProjectFormValues = z.infer<typeof pokerProjectSchema>;
 
+// Type for database project with relations
+type ProjectWithRelations = {
+  id: string;
+  name: string;
+  status: string;
+  packageType: "SHORT" | "FULL" | "CREDITS";
+  userId: string;
+  wherePlayed: string | null;
+  stakes: string | null;
+  yourHand: string | null;
+  opponentHand: string | null;
+  flop: string | null;
+  turn: string | null;
+  river: string | null;
+  voiceoverUrl: string | null;
+  videoUrl: string | null;
+  finalVideoUrl: string | null;
+  thumbnailUrl: string | null;
+  notes: string | null;
+  expiresAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  messages: any[];
+  transaction: any | null;
+};
+
+// Convert database project to form values
+function convertProjectToFormValues(project: ProjectWithRelations): PokerProjectFormValues & { id: string } {
+  return {
+    id: project.id,
+    name: project.name,
+    packageType: project.packageType,
+    wherePlayed: project.wherePlayed,
+    stakes: project.stakes,
+    yourHand: project.yourHand,
+    opponentHand: project.opponentHand,
+    flop: project.flop,
+    turn: project.turn,
+    river: project.river,
+    voiceoverUrl: project.voiceoverUrl,
+    videoUrl: project.videoUrl,
+  };
+}
+
 export default function EditableDetails({
   initialValues,
 }: {
-  initialValues: PokerProjectFormValues & { id: string };
+  initialValues: ProjectWithRelations;
 }) {
+  const formValues = convertProjectToFormValues(initialValues);
+  
   const form = useForm<PokerProjectFormValues>({
     resolver: zodResolver(pokerProjectSchema),
-    values: initialValues,
+    values: formValues,
   });
 
   async function onSubmit(values: PokerProjectFormValues) {
@@ -98,7 +144,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>Where You Played</FormLabel>
               <FormControl>
-                <Input placeholder="PokerStars, Live Casino, etc." {...field} />
+                <Input placeholder="PokerStars, Live Casino, etc." {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -112,7 +158,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>Stakes</FormLabel>
               <FormControl>
-                <Input placeholder="$1/$2, $5/$10, etc." {...field} />
+                <Input placeholder="$1/$2, $5/$10, etc." {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -126,7 +172,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>Your Hand</FormLabel>
               <FormControl>
-                <Input placeholder="A♠ K♠" {...field} />
+                <Input placeholder="A♠ K♠" {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -140,7 +186,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>Opponent's Hand (if known)</FormLabel>
               <FormControl>
-                <Input placeholder="Q♣ Q♦" {...field} />
+                <Input placeholder="Q♣ Q♦" {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -154,7 +200,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>Flop</FormLabel>
               <FormControl>
-                <Input placeholder="A♣ 7♠ 2♥" {...field} />
+                <Input placeholder="A♣ 7♠ 2♥" {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -168,7 +214,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>Turn</FormLabel>
               <FormControl>
-                <Input placeholder="K♦" {...field} />
+                <Input placeholder="K♦" {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -182,7 +228,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>River</FormLabel>
               <FormControl>
-                <Input placeholder="J♠" {...field} />
+                <Input placeholder="J♠" {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -196,7 +242,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>Voiceover URL</FormLabel>
               <FormControl>
-                <Input placeholder="https://drive.google.com/..." {...field} />
+                <Input placeholder="https://drive.google.com/..." {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -210,7 +256,7 @@ export default function EditableDetails({
             <FormItem>
               <FormLabel>Video URL</FormLabel>
               <FormControl>
-                <Input placeholder="https://drive.google.com/..." {...field} />
+                <Input placeholder="https://drive.google.com/..." {...field} value={field.value || ""} />
               </FormControl>
               <FormMessage />
             </FormItem>
