@@ -26,14 +26,12 @@ export default function Navbar({
   return (
     <nav className="flex h-full items-center justify-between">
       <Link href="/" className="flex items-center text-2xl font-bold">
-        <Image
-          src="/chad-next.png"
-          alt="ChadNext logo"
-          width="30"
-          height="30"
-          className="mr-2 rounded-sm object-contain"
-        />
-        <p>ChadNext</p>
+        <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-purple-600">
+          <span className="text-sm font-bold text-white">P</span>
+        </div>
+        <p className="bg-gradient-to-r from-red-600 to-purple-600 bg-clip-text text-transparent">
+          Poker Edit Pro
+        </p>
       </Link>
       <div className="hidden items-center gap-12 lg:flex 2xl:gap-16">
         <div className="space-x-4 text-center text-sm leading-loose text-muted-foreground md:text-left">

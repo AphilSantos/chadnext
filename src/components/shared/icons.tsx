@@ -26,6 +26,15 @@ import {
   Twitter,
   User,
   X,
+  Zap,
+  Award,
+  Upload,
+  MessageCircle,
+  Sparkles,
+  Check,
+  Folder,
+  MapPin,
+  DollarSign,
   type LucideIcon,
   type LucideProps,
 } from "lucide-react";
@@ -73,6 +82,16 @@ const Icons = {
   edit: Edit3,
   home: Home,
   dashboard: LayoutDashboard,
+  // New icons for poker platform
+  zap: Zap,
+  award: Award,
+  upload: Upload,
+  messageCircle: MessageCircle,
+  sparkles: Sparkles,
+  check: Check,
+  folder: Folder,
+  mapPin: MapPin,
+  dollarSign: DollarSign,
   gitHub: (props: LucideProps) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>
       <path

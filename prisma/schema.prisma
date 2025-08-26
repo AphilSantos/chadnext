@@ -36,6 +36,8 @@ model User {
   sessions               Session[]
   projects               Project[]
   emailVerificationCodes EmailVerificationCode[]
+  transactions           Transaction[]
+  credits                Int                     @default(0)
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -47,11 +49,91 @@ model User {
 }
 
 model Project {
-  id        String   @id @default(cuid())
-  name      String
-  domain    String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String        @id @default(cuid())
+  name        String
+  status      ProjectStatus @default(DRAFT)
+  packageType PackageType
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Poker hand details
+  wherePlayed String?
+  stakes      String?
+  yourHand    String?
+  opponentHand String?
+  flop        String?
+  turn        String?
+  river       String?
+  
+  // Files
+  voiceoverUrl String?
+  videoUrl     String?
+  
+  // Delivery
+  finalVideoUrl String?
+  thumbnailUrl  String?
+  notes         String?
+  
+  // Expiration for drafts
+  expiresAt     DateTime?
+  
+  // Relations
+  messages      Message[]
+  transaction   Transaction?
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  isFromEditor Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  amount    Int      // Amount in cents
+  type      TransactionType
+  status    TransactionStatus @default(PENDING)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?  @unique
+  project   Project? @relation(fields: [projectId], references: [id])
+  
+  // Payment details
+  packageType PackageType?
+  creditsPurchased Int?
+  
+  createdAt DateTime @default(now())
+}
+
+enum ProjectStatus {
+  DRAFT
+  SUBMITTED
+  IN_PROGRESS
+  DELIVERED
+}
+
+enum PackageType {
+  SHORT
+  FULL
+  CREDITS
+}
+
+enum TransactionType {
+  PURCHASE
+  CREDIT_PURCHASE
+  PROJECT_PAYMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
 }

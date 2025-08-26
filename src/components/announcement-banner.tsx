@@ -18,16 +18,14 @@ export function AnnouncementBanner() {
       <div className="container mx-auto px-4 py-2">
         <div className="flex items-center justify-between">
           <div className="flex-1 text-center text-sm font-medium text-primary-foreground">
-            <span className="mr-2">🚀</span>
-            The Author has released a timesaver tool for vibe coders,
-            developers, founders, AI users -{" "}
+            <span className="mr-2">🎬</span>
+            <strong>New!</strong> Get 20% off your first poker video edit.
+            Professional quality in 24 hours -{" "}
             <Link
-              href="https://voicetypr.com"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/dashboard/projects/new"
               className="font-semibold underline-offset-4 transition-all hover:underline"
             >
-              check it out now!
+              start your project now!
             </Link>
           </div>
           <button

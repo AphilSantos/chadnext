@@ -9,19 +9,24 @@ import LogoutButton from "../shared/logout-button";
 
 const navItems = [
   {
-    title: "Projects",
+    title: "My Projects",
     href: "/dashboard/projects",
-    icon: Icons.projectPlus,
+    icon: Icons.folder,
   },
   {
-    title: "Billing",
-    href: "/dashboard/billing",
+    title: "Chat",
+    href: "/dashboard/chat",
+    icon: Icons.messageCircle,
+  },
+  {
+    title: "Payments",
+    href: "/dashboard/payments",
     icon: Icons.billing,
   },
   {
-    title: "Settings",
+    title: "Profile",
     href: "/dashboard/settings",
-    icon: Icons.settings,
+    icon: Icons.user,
   },
 ];
 
@@ -34,26 +39,38 @@ export default function SidebarNav({ className, ...props }: SidebarNavProps) {
   const isActive = (href: string) => pathname === href;
   return (
     <nav
-      className={cn("flex h-full gap-x-2 lg:flex-col lg:gap-y-1.5", className)}
+      className={cn(
+        "flex h-full min-w-[240px] flex-col border-r bg-card p-4",
+        className
+      )}
       {...props}
     >
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            isActive(item.href)
-              ? "bg-muted hover:bg-muted"
-              : "hover:bg-transparent hover:underline",
-            "justify-start"
-          )}
-        >
-          {<item.icon className="mr-2 h-4 w-4 " />} {item.title}
-        </Link>
-      ))}
+      <div className="mb-6">
+        <h2 className="mb-4 text-lg font-semibold text-muted-foreground">
+          Navigation
+        </h2>
+        <div className="space-y-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                isActive(item.href)
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <item.icon className="h-4 w-4" />
+              {item.title}
+            </Link>
+          ))}
+        </div>
+      </div>
 
-      <LogoutButton className="mt-auto hidden lg:block" />
+      <div className="mt-auto border-t pt-4">
+        <LogoutButton className="w-full justify-start" />
+      </div>
     </nav>
   );
 }
