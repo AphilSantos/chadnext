@@ -9,17 +9,8 @@ export default async function Billing() {
 
   const subscriptionPlan = await getUserSubscriptionPlan(user?.id as string);
 
-  // Temporarily disabled Stripe subscription check
-  // If user has a pro plan, check cancel status on Stripe.
-  // let isCanceled = false;
-  // if (subscriptionPlan.isPro && subscriptionPlan.stripeSubscriptionId) {
-  //   const stripePlan = await stripe.subscriptions.retrieve(
-  //     subscriptionPlan.stripeSubscriptionId
-  //   );
-  //   isCanceled = stripePlan.cancel_at_period_end;
-  // }
-  
-  // Set isCanceled to false for now
+  // For poker platform, we'll use a simplified billing system
+  // Stripe functionality is temporarily disabled
   const isCanceled = false;
   
   return (
@@ -29,17 +20,8 @@ export default async function Billing() {
           <AlertTriangleIcon className="h-5 w-5 shrink-0" />
           <div>
             <AlertDescription>
-              <strong>ChadNext</strong> just demonstrates how to use Stripe in
-              Next.js App router. Please use test cards from{" "}
-              <a
-                href="https://stripe.com/docs/testing#cards"
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium underline underline-offset-4"
-              >
-                Stripe docs
-              </a>
-              .
+              <strong>Poker Edit Pro</strong> payment system is currently in development. 
+              For now, all payments are processed through our secure payment partners.
             </AlertDescription>
           </div>
         </div>
