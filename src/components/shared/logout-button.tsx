@@ -1,5 +1,5 @@
 import { LogOutIcon } from "lucide-react";
-import { logout } from "~/app/[locale]/actions";
+import { simpleLogout } from "~/app/[locale]/actions";
 import { Button } from "../ui/button";
 
 export default function LogoutButton({ className }: { className?: string }) {
@@ -8,7 +8,7 @@ export default function LogoutButton({ className }: { className?: string }) {
       <Button
         type="submit"
         onClick={async () => {
-          await logout();
+          await simpleLogout();
         }}
         variant="destructive"
       >
