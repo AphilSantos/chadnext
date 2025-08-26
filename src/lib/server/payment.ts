@@ -1,5 +1,4 @@
 // import Stripe from "stripe";
-import { freePlan, proPlan } from "~/config/subscription";
 import { prisma } from "~/lib/server/db";
 import { type UserSubscriptionPlan } from "~/types";
 
@@ -41,6 +40,21 @@ export async function getUserSubscriptionPlan(
   if (!user) {
     throw new Error("User not found");
   }
+
+  // For poker platform, we'll use a simple free plan structure
+  const freePlan = {
+    name: "Free",
+    description: "Basic access to poker editing platform",
+    stripePriceId: "",
+    price: 0,
+  };
+
+  const proPlan = {
+    name: "Pro",
+    description: "Full access to all features",
+    stripePriceId: "price_pro",
+    price: 5000, // $50
+  };
 
   // Temporarily disable pro plan check to avoid Stripe issues
   // const isPro = Boolean(

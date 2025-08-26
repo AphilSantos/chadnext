@@ -68,6 +68,7 @@ const Icons = {
   media: Image,
   settings: Settings,
   billing: CreditCard,
+  creditCard: CreditCard,
   ellipsis: MoreVertical,
   add: Plus,
   warning: AlertTriangle,
