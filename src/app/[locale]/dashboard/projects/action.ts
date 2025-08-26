@@ -20,6 +20,21 @@ interface CreateProjectPayload {
   videoUrl?: string;
 }
 
+export async function checkIfFreePlanLimitReached() {
+  const { user } = await getCurrentSession();
+  
+  // For poker platform, we'll use a simple limit check
+  // You can adjust this logic based on your requirements
+  const projectCount = await prisma.project.count({
+    where: {
+      userId: user?.id,
+    },
+  });
+  
+  // Allow up to 3 projects for free users
+  return projectCount >= 3;
+}
+
 export async function createProject(payload: CreateProjectPayload) {
   const { user } = await getCurrentSession();
 
