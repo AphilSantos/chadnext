@@ -15,17 +15,21 @@ import { Badge } from "~/components/ui/badge";
 import { createProject } from "../action";
 import { type PackageType } from "@prisma/client";
 import Icons from "~/components/shared/icons";
+import { MultiCardSelector } from "~/components/ui/multi-card-selector";
+import { CardSelector } from "~/components/ui/card-selector";
+import { CardListDisplay } from "~/components/ui/card-display";
+import { type Card as CardType } from "~/lib/card-deck";
 
 const formSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   packageType: z.enum(["SHORT", "FULL", "CREDITS"]),
   wherePlayed: z.string().optional(),
   stakes: z.string().optional(),
-  yourHand: z.string().optional(),
-  opponentHand: z.string().optional(),
-  flop: z.string().optional(),
-  turn: z.string().optional(),
-  river: z.string().optional(),
+  yourHand: z.array(z.any()).min(2, "Please select exactly 2 cards").max(2, "Please select exactly 2 cards"),
+  opponentHand: z.array(z.any()).min(2, "Please select exactly 2 cards").max(2, "Please select exactly 2 cards"),
+  flop: z.array(z.any()).min(3, "Please select exactly 3 cards").max(3, "Please select exactly 3 cards"),
+  turn: z.any().optional(),
+  river: z.any().optional(),
   voiceoverUrl: z.string().url().optional().or(z.literal("")),
   videoUrl: z.string().url().optional().or(z.literal("")),
 });
@@ -57,11 +61,11 @@ export default function NewProjectForm({ packages }: NewProjectFormProps) {
       packageType: "SHORT",
       wherePlayed: "",
       stakes: "",
-      yourHand: "",
-      opponentHand: "",
-      flop: "",
-      turn: "",
-      river: "",
+      yourHand: [],
+      opponentHand: [],
+      flop: [],
+      turn: undefined,
+      river: undefined,
       voiceoverUrl: "",
       videoUrl: "",
     },
@@ -70,7 +74,17 @@ export default function NewProjectForm({ packages }: NewProjectFormProps) {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      await createProject(data);
+      // Convert card arrays to strings for the API
+      const formattedData = {
+        ...data,
+        yourHand: data.yourHand.map(card => `${card.value}${card.symbol}`).join(' '),
+        opponentHand: data.opponentHand.map(card => `${card.value}${card.symbol}`).join(' '),
+        flop: data.flop.map(card => `${card.value}${card.symbol}`).join(' '),
+        turn: data.turn ? `${data.turn.value}${data.turn.symbol}` : '',
+        river: data.river ? `${data.river.value}${data.river.symbol}` : '',
+      };
+      
+      await createProject(formattedData);
       router.push("/dashboard/projects");
     } catch (error) {
       console.error("Error creating project:", error);
@@ -83,6 +97,23 @@ export default function NewProjectForm({ packages }: NewProjectFormProps) {
     const pkg = packages.find(p => p.id === packageType);
     setSelectedPackage(pkg || null);
     form.setValue("packageType", packageType);
+  };
+
+  // Get all selected cards to exclude from other selectors
+  const getAllSelectedCards = () => {
+    const yourHand = form.watch("yourHand") || [];
+    const opponentHand = form.watch("opponentHand") || [];
+    const flop = form.watch("flop") || [];
+    const turn = form.watch("turn");
+    const river = form.watch("river");
+    
+    return [
+      ...yourHand,
+      ...opponentHand,
+      ...flop,
+      ...(turn ? [turn] : []),
+      ...(river ? [river] : []),
+    ];
   };
 
   return (
@@ -162,46 +193,58 @@ export default function NewProjectForm({ packages }: NewProjectFormProps) {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <Label htmlFor="yourHand">Your Hand</Label>
-                  <Input
-                    id="yourHand"
-                    {...form.register("yourHand")}
-                    placeholder="e.g., A♠ K♠"
+                  <Label htmlFor="yourHand">Your Hand *</Label>
+                  <MultiCardSelector
+                    selectedCards={form.watch("yourHand") || []}
+                    onCardsChange={(cards) => form.setValue("yourHand", cards)}
+                    maxCards={2}
+                    placeholder="Select your 2 cards..."
                   />
+                  {form.formState.errors.yourHand && (
+                    <p className="text-sm text-red-600 mt-1">{form.formState.errors.yourHand.message}</p>
+                  )}
                 </div>
                 <div>
-                  <Label htmlFor="opponentHand">Opponent's Hand</Label>
-                  <Input
-                    id="opponentHand"
-                    {...form.register("opponentHand")}
-                    placeholder="e.g., Q♣ Q♦"
+                  <Label htmlFor="opponentHand">Opponent&apos;s Hand *</Label>
+                  <MultiCardSelector
+                    selectedCards={form.watch("opponentHand") || []}
+                    onCardsChange={(cards) => form.setValue("opponentHand", cards)}
+                    maxCards={2}
+                    placeholder="Select opponent's 2 cards..."
                   />
+                  {form.formState.errors.opponentHand && (
+                    <p className="text-sm text-red-600 mt-1">{form.formState.errors.opponentHand.message}</p>
+                  )}
                 </div>
               </div>
 
               <div className="grid gap-4 md:grid-cols-3">
                 <div>
-                  <Label htmlFor="flop">Flop</Label>
-                  <Input
-                    id="flop"
-                    {...form.register("flop")}
-                    placeholder="e.g., A♣ 7♠ 2♥"
+                  <Label htmlFor="flop">Flop *</Label>
+                  <MultiCardSelector
+                    selectedCards={form.watch("flop") || []}
+                    onCardsChange={(cards) => form.setValue("flop", cards)}
+                    maxCards={3}
+                    placeholder="Select 3 flop cards..."
                   />
+                  {form.formState.errors.flop && (
+                    <p className="text-sm text-red-600 mt-1">{form.formState.errors.flop.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="turn">Turn</Label>
-                  <Input
-                    id="turn"
-                    {...form.register("turn")}
-                    placeholder="e.g., K♦"
+                  <CardSelector
+                    selectedCard={form.watch("turn")}
+                    onCardSelect={(card) => form.setValue("turn", card)}
+                    placeholder="Select turn card..."
                   />
                 </div>
                 <div>
                   <Label htmlFor="river">River</Label>
-                  <Input
-                    id="river"
-                    {...form.register("river")}
-                    placeholder="e.g., 9♠"
+                  <CardSelector
+                    selectedCard={form.watch("river")}
+                    onCardSelect={(card) => form.setValue("river", card)}
+                    placeholder="Select river card..."
                   />
                 </div>
               </div>

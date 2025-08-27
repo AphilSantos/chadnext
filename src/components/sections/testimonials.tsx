@@ -50,8 +50,8 @@ export default function Testimonials() {
             What Our Players Say
           </h2>
           <p className="text-xl text-muted-foreground">
-            Join hundreds of satisfied poker players who've transformed their
-            content with our editing service
+            Join hundreds of satisfied poker players who&apos;ve transformed
+            their content with our editing service
           </p>
         </div>
 
@@ -82,7 +82,7 @@ export default function Testimonials() {
               </CardHeader>
               <CardContent className="relative z-10">
                 <p className="italic text-muted-foreground transition-colors duration-300 group-hover:text-gray-700 dark:group-hover:text-gray-300">
-                  "{testimonial.quote}"
+                  &ldquo;{testimonial.quote}&rdquo;
                 </p>
               </CardContent>
             </Card>

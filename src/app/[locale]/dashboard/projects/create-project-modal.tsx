@@ -198,7 +198,7 @@ export default function CreateProjectModal() {
                 name="opponentHand"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Opponent's Hand (if known)</FormLabel>
+                    <FormLabel>Opponent&apos;s Hand (if known)</FormLabel>
                     <FormControl>
                       <Input placeholder="Q♣ Q♦" {...field} value={field.value || ""} />
                     </FormControl>
