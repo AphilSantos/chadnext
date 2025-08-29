@@ -23,6 +23,7 @@ export default function AuthForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [otp, setOTP] = useState("");
   const [countdown, setCountdown] = useState(30);
@@ -149,7 +150,9 @@ export default function AuthForm() {
               <button
                 type="submit"
                 className={cn(buttonVariants())}
-                disabled={isLoading || isGithubLoading || isVerifying}
+                disabled={
+                  isLoading || isGithubLoading || isGoogleLoading || isVerifying
+                }
               >
                 {isLoading && (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -172,6 +175,20 @@ export default function AuthForm() {
               onClick={() => setIsGithubLoading(true)}
             >
               Continue with <Icons.gitHub className="ml-2 h-4 w-4" />
+            </Link>
+          )}
+
+          {isGoogleLoading ? (
+            <Button className="w-full cursor-not-allowed" variant="outline">
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            </Button>
+          ) : (
+            <Link
+              href="/api/auth/login/google"
+              className={cn(buttonVariants({ variant: "outline" }))}
+              onClick={() => setIsGoogleLoading(true)}
+            >
+              Continue with <Icons.google className="ml-2 h-4 w-4" />
             </Link>
           )}
         </>
