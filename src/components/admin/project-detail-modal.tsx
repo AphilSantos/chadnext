@@ -42,6 +42,12 @@ export default function ProjectDetailModal({
   const [newStatus, setNewStatus] = useState<"DRAFT" | "SUBMITTED" | "IN_PROGRESS" | "DELIVERED">(project.status);
   const [adminNotes, setAdminNotes] = useState(project.adminNotes || "");
 
+  const handleStatusChange = (value: string) => {
+    if (value === "DRAFT" || value === "SUBMITTED" || value === "IN_PROGRESS" || value === "DELIVERED") {
+      setNewStatus(value);
+    }
+  };
+
   const formatCardString = (cardString: string | null) => {
     if (!cardString) return [];
     return cardString.split(" ").map((card) => {
@@ -440,7 +446,7 @@ export default function ProjectDetailModal({
                   <label className="text-sm font-medium text-gray-500">
                     Change Status:
                   </label>
-                  <Select value={newStatus} onValueChange={setNewStatus}>
+                  <Select value={newStatus} onValueChange={handleStatusChange}>
                     <SelectTrigger className="w-40">
                       <SelectValue />
                     </SelectTrigger>
