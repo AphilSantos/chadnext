@@ -2,7 +2,10 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "@uploadthing/react";
-import { generateClientDropzoneAccept, generatePermittedFileTypes } from "uploadthing/client";
+import {
+  generateClientDropzoneAccept,
+  generatePermittedFileTypes,
+} from "uploadthing/client";
 import { useUploadThing } from "~/lib/client/uploadthing";
 import { Button } from "./button";
 import { Input } from "./input";
@@ -43,49 +46,51 @@ export default function DualFileUpload({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMode, setUploadMode] = useState<"url" | "upload">("url");
 
-  const { startUpload, isUploading: isUploadThingUploading, routeConfig } = useUploadThing(
-    uploadRoute,
-    {
-      onClientUploadComplete: (res) => {
-        if (res && res[0]) {
-          onChange(res[0].url);
-          toast({
-            title: "File uploaded successfully!",
-            description: "Your file has been uploaded and is ready to use.",
-          });
-          setIsUploading(false);
-          // Clear preview and files after successful upload
-          if (preview) {
-            URL.revokeObjectURL(preview);
-            setPreview(null);
-          }
-          setFiles([]);
-        }
-      },
-      onUploadError: (error) => {
-        console.error("Upload error:", error);
+  const {
+    startUpload,
+    isUploading: isUploadThingUploading,
+    routeConfig,
+  } = useUploadThing(uploadRoute, {
+    onClientUploadComplete: (res) => {
+      if (res && res[0]) {
+        onChange(res[0].url);
         toast({
-          title: "Upload failed",
-          description: "There was an error uploading your file. Please try again.",
-          variant: "destructive",
+          title: "File uploaded successfully!",
+          description: "Your file has been uploaded and is ready to use.",
         });
         setIsUploading(false);
-      },
-    }
-  );
+        // Clear preview and files after successful upload
+        if (preview) {
+          URL.revokeObjectURL(preview);
+          setPreview(null);
+        }
+        setFiles([]);
+      }
+    },
+    onUploadError: (error) => {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload failed",
+        description:
+          "There was an error uploading your file. Please try again.",
+        variant: "destructive",
+      });
+      setIsUploading(false);
+    },
+  });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
-    
+
     const file = acceptedFiles[0];
     setFiles([file]);
-    
+
     // Create preview for supported file types
-    if (file.type.startsWith('image/')) {
+    if (file.type.startsWith("image/")) {
       setPreview(URL.createObjectURL(file));
-    } else if (file.type.startsWith('video/')) {
+    } else if (file.type.startsWith("video/")) {
       setPreview(URL.createObjectURL(file));
-    } else if (file.type.startsWith('audio/')) {
+    } else if (file.type.startsWith("audio/")) {
       setPreview(URL.createObjectURL(file));
     }
   }, []);
@@ -101,7 +106,7 @@ export default function DualFileUpload({
 
   const handleUpload = async () => {
     if (files.length === 0) return;
-    
+
     setIsUploading(true);
     try {
       await startUpload(files);
@@ -145,25 +150,27 @@ export default function DualFileUpload({
 
   return (
     <div className={cn("space-y-3", className)}>
-      <Label htmlFor={label.toLowerCase().replace(/\s+/g, '-')}>{label}</Label>
-      
-      <Tabs value={uploadMode} onValueChange={(value) => handleModeChange(value as "url" | "upload")} className="w-full">
+      <Label htmlFor={label.toLowerCase().replace(/\s+/g, "-")}>{label}</Label>
+
+      <Tabs
+        value={uploadMode}
+        onValueChange={(value) => handleModeChange(value as "url" | "upload")}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="url">Paste URL</TabsTrigger>
           <TabsTrigger value="upload">Upload File</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="url" className="space-y-2">
           <Input
             placeholder={placeholder}
             value={value}
             onChange={(e) => handleUrlChange(e.target.value)}
           />
-          <p className="text-sm text-muted-foreground">
-            {description}
-          </p>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </TabsContent>
-        
+
         <TabsContent value="upload" className="space-y-3">
           {files.length === 0 ? (
             <div
@@ -181,7 +188,9 @@ export default function DualFileUpload({
                     <p className="text-primary">Drop the file here...</p>
                   ) : (
                     <>
-                      <p className="font-medium">Click to upload or drag and drop</p>
+                      <p className="font-medium">
+                        Click to upload or drag and drop
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         {acceptedFileTypes.join(", ")} up to {maxFileSize}
                       </p>
@@ -193,7 +202,10 @@ export default function DualFileUpload({
           ) : (
             <div className="space-y-3">
               {files.map((file, index) => (
-                <div key={index} className="flex items-center justify-between rounded-lg border p-3">
+                <div
+                  key={index}
+                  className="flex items-center justify-between rounded-lg border p-3"
+                >
                   <div className="flex items-center space-x-3">
                     <Icons.file className="h-5 w-5 text-muted-foreground" />
                     <div>
@@ -213,15 +225,23 @@ export default function DualFileUpload({
                   </Button>
                 </div>
               ))}
-              
+
               {preview && (
                 <div className="rounded-lg border p-3">
-                  <p className="text-sm font-medium mb-2">Preview:</p>
-                  {files[0]?.type.startsWith('image/') ? (
-                    <img src={preview} alt="Preview" className="max-h-32 rounded object-cover" />
-                  ) : files[0]?.type.startsWith('video/') ? (
-                    <video src={preview} controls className="max-h-32 rounded" />
-                  ) : files[0]?.type.startsWith('audio/') ? (
+                  <p className="mb-2 text-sm font-medium">Preview:</p>
+                  {files[0]?.type.startsWith("image/") ? (
+                    <img
+                      src={preview}
+                      alt="Preview"
+                      className="max-h-32 rounded object-cover"
+                    />
+                  ) : files[0]?.type.startsWith("video/") ? (
+                    <video
+                      src={preview}
+                      controls
+                      className="max-h-32 rounded"
+                    />
+                  ) : files[0]?.type.startsWith("audio/") ? (
                     <audio src={preview} controls className="w-full" />
                   ) : (
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -231,7 +251,7 @@ export default function DualFileUpload({
                   )}
                 </div>
               )}
-              
+
               <div className="flex space-x-2">
                 <Button
                   onClick={handleUpload}
@@ -262,7 +282,7 @@ export default function DualFileUpload({
           )}
         </TabsContent>
       </Tabs>
-      
+
       {value && (
         <div className="flex items-center space-x-2">
           <Badge variant="secondary" className="text-xs">
@@ -286,10 +306,10 @@ function parseFileSize(sizeString: string): number {
     MB: 1024 * 1024,
     GB: 1024 * 1024 * 1024,
   };
-  
+
   const match = sizeString.match(/^(\d+(?:\.\d+)?)\s*([KMGT]?B)$/i);
   if (!match) return 100 * 1024 * 1024; // Default to 100MB
-  
+
   const [, size, unit] = match;
   const unitKey = unit.toUpperCase();
   return parseFloat(size) * (units[unitKey] || units.MB);

@@ -28,9 +28,9 @@ export const ourFileRouter = {
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { url: file.url };
     }),
-  
+
   // Video uploader for raw video files
-  videoUploader: f({ video: { maxFileSize: "100MB", maxFileCount: 1 } })
+  videoUploader: f({ video: { maxFileSize: "100MB" as any, maxFileCount: 1 } })
     .middleware(async ({ req }) => {
       const { user, session } = await getCurrentSession();
       if (!session) throw new UploadThingError("Unauthorized");
@@ -41,9 +41,9 @@ export const ourFileRouter = {
       console.log("video file url", file.url);
       return { url: file.url };
     }),
-  
+
   // Audio uploader for voiceover files
-  audioUploader: f({ audio: { maxFileSize: "50MB", maxFileCount: 1 } })
+  audioUploader: f({ audio: { maxFileSize: "50MB" as any, maxFileCount: 1 } })
     .middleware(async ({ req }) => {
       const { user, session } = await getCurrentSession();
       if (!session) throw new UploadThingError("Unauthorized");
