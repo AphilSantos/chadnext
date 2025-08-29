@@ -39,7 +39,7 @@ export default function ProjectDetailModal({
 }: ProjectDetailModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
-  const [newStatus, setNewStatus] = useState<string>(project.status);
+  const [newStatus, setNewStatus] = useState<"DRAFT" | "SUBMITTED" | "IN_PROGRESS" | "DELIVERED">(project.status);
   const [adminNotes, setAdminNotes] = useState(project.adminNotes || "");
 
   const formatCardString = (cardString: string | null) => {
