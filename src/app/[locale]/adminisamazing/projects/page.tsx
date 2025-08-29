@@ -1,20 +1,13 @@
 import { prisma } from "~/lib/server/db";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
-import Icons from "~/components/shared/icons";
-import Link from "next/link";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import ProjectDetailModal from "~/components/admin/project-detail-modal";
 
 async function getProjects() {
   const projects = await prisma.project.findMany({
     include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
+      user: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -27,152 +20,178 @@ async function getProjects() {
 export default async function ProjectsPage() {
   const projects = await getProjects();
 
-  const statusCounts = {
-    DRAFT: projects.filter(p => p.status === "DRAFT").length,
-    SUBMITTED: projects.filter(p => p.status === "SUBMITTED").length,
-    IN_PROGRESS: projects.filter(p => p.status === "IN_PROGRESS").length,
-    DELIVERED: projects.filter(p => p.status === "DELIVERED").length,
+  const drafts = projects.filter(p => p.status === "DRAFT");
+  const submitted = projects.filter(p => p.status !== "DRAFT");
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "SUBMITTED": return "bg-blue-100 text-blue-800";
+      case "IN_PROGRESS": return "bg-orange-100 text-orange-800";
+      case "DELIVERED": return "bg-green-100 text-green-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
   };
+
+  const ProjectCard = ({ project }: { project: any }) => (
+    <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+      <div className="flex items-center space-x-4">
+        <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+          <span className="text-white font-bold text-lg">P</span>
+        </div>
+        <div className="flex-1">
+          <h3 className="font-medium text-gray-900">{project.name}</h3>
+          <p className="text-sm text-gray-500">
+            by {project.user.name || project.user.email}
+          </p>
+          <div className="flex items-center space-x-4 mt-1">
+            <p className="text-xs text-gray-400">
+              {project.packageType} • {new Date(project.createdAt).toLocaleDateString()}
+            </p>
+            <div className="flex items-center space-x-2">
+              {project.voiceoverUrl && (
+                <Badge variant="outline" className="text-xs">
+                  🎤 Voiceover
+                </Badge>
+              )}
+              {project.videoUrl && (
+                <Badge variant="outline" className="text-xs">
+                  🎥 Video
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex items-center space-x-3">
+        <Badge
+          variant={
+            project.status === "DELIVERED"
+              ? "default"
+              : project.status === "IN_PROGRESS"
+              ? "secondary"
+              : project.status === "SUBMITTED"
+              ? "outline"
+              : "destructive"
+          }
+        >
+          {project.status.replace("_", " ")}
+        </Badge>
+        
+        <ProjectDetailModal project={project} />
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Project Management</h1>
-          <p className="text-gray-600 mt-2">
-            Review and manage project submissions
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button variant="outline">
-            <Icons.download className="mr-2 h-4 w-4" />
-            Export Projects
-          </Button>
-          <Button>
-            <Icons.folder className="mr-2 h-4 w-4" />
-            View All
-          </Button>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Project Management</h1>
+        <p className="text-gray-600 mt-2">Review and manage project submissions</p>
       </div>
 
-      {/* Status Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Drafts</CardTitle>
-            <Icons.edit className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-600">{statusCounts.DRAFT}</div>
-            <p className="text-xs text-muted-foreground">
-              Incomplete projects
-            </p>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-gray-900">{projects.length}</div>
+            <p className="text-xs text-gray-500">Total Projects</p>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Submitted</CardTitle>
-            <Icons.clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{statusCounts.SUBMITTED}</div>
-            <p className="text-xs text-muted-foreground">
-              Awaiting review
-            </p>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-orange-600">{drafts.length}</div>
+            <p className="text-xs text-gray-500">Drafts</p>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <Icons.spinner className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{statusCounts.IN_PROGRESS}</div>
-            <p className="text-xs text-muted-foreground">
-              Currently editing
-            </p>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-blue-600">{submitted.length}</div>
+            <p className="text-xs text-gray-500">Submitted</p>
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Delivered</CardTitle>
-            <Icons.check className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{statusCounts.DELIVERED}</div>
-            <p className="text-xs text-muted-foreground">
-              Completed projects
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Projects */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Projects</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {projects.slice(0, 10).map((project) => (
-              <div
-                key={project.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                    <Icons.folder className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">{project.name}</h3>
-                    <p className="text-sm text-gray-500">
-                      by {project.user.name || project.user.email}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {project.packageType} • {new Date(project.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <Badge
-                    variant={
-                      project.status === "DELIVERED"
-                        ? "default"
-                        : project.status === "IN_PROGRESS"
-                        ? "secondary"
-                        : project.status === "SUBMITTED"
-                        ? "outline"
-                        : "destructive"
-                    }
-                  >
-                    {project.status.replace("_", " ")}
-                  </Badge>
-                  
-                  <Button variant="outline" size="sm">
-                    <Icons.edit className="mr-2 h-4 w-4" />
-                    Review
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {projects.length === 0 && (
-            <div className="text-center py-12">
-              <Icons.folder className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No projects found</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Projects will appear here once users start creating them.
-              </p>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-green-600">
+              {projects.filter(p => p.status === "DELIVERED").length}
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <p className="text-xs text-gray-500">Delivered</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="submitted" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="submitted" className="flex items-center space-x-2">
+            <span>📤 Submitted & Paid</span>
+            <Badge variant="secondary" className="ml-2">
+              {submitted.length}
+            </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="drafts" className="flex items-center space-x-2">
+            <span>📝 Drafts</span>
+            <Badge variant="secondary" className="ml-2">
+              {drafts.length}
+            </Badge>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="submitted" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <span>Submitted & Paid Projects</span>
+                <Badge variant="outline">{submitted.length} projects</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {submitted.length > 0 ? (
+                <div className="space-y-4">
+                  {submitted.map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📤</div>
+                  <h3 className="text-lg font-medium text-gray-900">No submitted projects</h3>
+                  <p className="text-sm text-gray-500">
+                    Projects will appear here once users submit them for editing.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="drafts" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <span>Draft Projects</span>
+                <Badge variant="outline">{drafts.length} projects</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {drafts.length > 0 ? (
+                <div className="space-y-4">
+                  {drafts.map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📝</div>
+                  <h3 className="text-lg font-medium text-gray-900">No draft projects</h3>
+                  <p className="text-sm text-gray-500">
+                    Draft projects will appear here once users start creating them.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

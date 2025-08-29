@@ -78,6 +78,9 @@ model Project {
   // Expiration for drafts
   expiresAt     DateTime?
   
+  // Admin fields
+  adminNotes    String?
+  
   // Relations
   messages      Message[]
   transaction   Transaction?

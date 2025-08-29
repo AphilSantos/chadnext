@@ -28,6 +28,32 @@ export const ourFileRouter = {
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { url: file.url };
     }),
+  
+  // Video uploader for raw video files
+  videoUploader: f({ video: { maxFileSize: "100MB", maxFileCount: 1 } })
+    .middleware(async ({ req }) => {
+      const { user, session } = await getCurrentSession();
+      if (!session) throw new UploadThingError("Unauthorized");
+      return { userId: user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Video upload complete for userId:", metadata.userId);
+      console.log("video file url", file.url);
+      return { url: file.url };
+    }),
+  
+  // Audio uploader for voiceover files
+  audioUploader: f({ audio: { maxFileSize: "50MB", maxFileCount: 1 } })
+    .middleware(async ({ req }) => {
+      const { user, session } = await getCurrentSession();
+      if (!session) throw new UploadThingError("Unauthorized");
+      return { userId: user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Audio upload complete for userId:", metadata.userId);
+      console.log("audio file url", file.url);
+      return { url: file.url };
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

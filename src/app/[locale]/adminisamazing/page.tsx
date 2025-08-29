@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
+import { Badge } from "~/components/ui/badge";
 import Icons from "~/components/shared/icons";
 import Link from "next/link";
 import { prisma } from "~/lib/server/db";
@@ -12,6 +13,9 @@ async function getDashboardStats() {
     pendingProjects,
     activeProjects,
     completedProjects,
+    projectsWithFiles,
+    recentProjects,
+    packageStats,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.project.count(),
@@ -22,6 +26,27 @@ async function getDashboardStats() {
     prisma.project.count({ where: { status: "SUBMITTED" } }),
     prisma.project.count({ where: { status: "IN_PROGRESS" } }),
     prisma.project.count({ where: { status: "DELIVERED" } }),
+    prisma.project.count({
+      where: {
+        OR: [
+          { voiceoverUrl: { not: null } },
+          { videoUrl: { not: null } }
+        ]
+      }
+    }),
+    prisma.project.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: { name: true, email: true }
+        }
+      }
+    }),
+    prisma.project.groupBy({
+      by: ["packageType"],
+      _count: { packageType: true }
+    })
   ]);
 
   return {
@@ -31,6 +56,9 @@ async function getDashboardStats() {
     pendingProjects,
     activeProjects,
     completedProjects,
+    projectsWithFiles,
+    recentProjects,
+    packageStats,
   };
 }
 
@@ -223,6 +251,110 @@ export default async function AdminDashboard() {
           ))}
         </div>
       </div>
+
+      {/* File Upload Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">File Upload Overview</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Projects with Files</span>
+              <span className="font-semibold text-blue-600">{stats.projectsWithFiles}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">File Upload Rate</span>
+              <span className="font-semibold text-green-600">
+                {stats.totalProjects > 0 ? Math.round((stats.projectsWithFiles / stats.totalProjects) * 100) : 0}%
+              </span>
+            </div>
+            <div className="pt-2">
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full" 
+                  style={{ 
+                    width: `${stats.totalProjects > 0 ? (stats.projectsWithFiles / stats.totalProjects) * 100 : 0}%` 
+                  }}
+                ></div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Package Distribution</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {stats.packageStats.map((stat) => (
+              <div key={stat.packageType} className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">{stat.packageType}</span>
+                <span className="font-semibold text-purple-600">{stat._count.packageType}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Projects */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Recent Project Submissions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {stats.recentProjects.map((project) => (
+              <div
+                key={project.id}
+                className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                    <Icons.folder className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">{project.name}</h4>
+                    <p className="text-sm text-gray-500">
+                      by {project.user.name || project.user.email}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="text-xs">
+                    {project.packageType}
+                  </Badge>
+                  <div className="flex space-x-1">
+                    {project.voiceoverUrl && (
+                      <Badge variant="secondary" className="text-xs">
+                        <Icons.file className="mr-1 h-3 w-3" />
+                        Audio
+                      </Badge>
+                    )}
+                    {project.videoUrl && (
+                      <Badge variant="secondary" className="text-xs">
+                        <Icons.file className="mr-1 h-3 w-3" />
+                        Video
+                      </Badge>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    {new Date(project.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+            
+            {stats.recentProjects.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <Icons.folder className="mx-auto h-8 w-8 mb-2" />
+                <p>No recent projects</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

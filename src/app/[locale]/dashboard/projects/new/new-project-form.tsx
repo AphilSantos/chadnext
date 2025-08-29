@@ -19,6 +19,7 @@ import { MultiCardSelector } from "~/components/ui/multi-card-selector";
 import { CardSelector } from "~/components/ui/card-selector";
 import { CardListDisplay } from "~/components/ui/card-display";
 import { type Card as CardType } from "~/lib/card-deck";
+import DualFileUpload from "~/components/ui/dual-file-upload";
 
 const formSchema = z.object({
   name: z.string().min(1, "Project name is required"),
@@ -255,30 +256,30 @@ export default function NewProjectForm({ packages }: NewProjectFormProps) {
             <CardHeader>
               <CardTitle>Upload Files</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="voiceoverUrl">Voiceover URL (Optional)</Label>
-                <Input
-                  id="voiceoverUrl"
-                  {...form.register("voiceoverUrl")}
-                  placeholder="https://drive.google.com/..."
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  Upload your voiceover to Google Drive, Dropbox, or similar and paste the link here.
-                </p>
-              </div>
+            <CardContent className="space-y-6">
+              <DualFileUpload
+                label="Voiceover (Optional)"
+                placeholder="https://drive.google.com/..."
+                description="Upload your voiceover file directly or paste a link from Google Drive, Dropbox, or similar."
+                acceptedFileTypes={["audio/*"]}
+                maxFileSize="50MB"
+                maxFileCount={1}
+                value={form.watch("voiceoverUrl") || ""}
+                onChange={(value) => form.setValue("voiceoverUrl", value)}
+                uploadRoute="audioUploader"
+              />
 
-              <div>
-                <Label htmlFor="videoUrl">Raw Video URL (Optional)</Label>
-                <Input
-                  id="videoUrl"
-                  {...form.register("videoUrl")}
-                  placeholder="https://drive.google.com/..."
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  Upload your raw footage to Google Drive, Dropbox, or similar and paste the link here.
-                </p>
-              </div>
+              <DualFileUpload
+                label="Raw Video (Optional)"
+                placeholder="https://drive.google.com/..."
+                description="Upload your raw footage file directly or paste a link from Google Drive, Dropbox, or similar."
+                acceptedFileTypes={["video/*"]}
+                maxFileSize="100MB"
+                maxFileCount={1}
+                value={form.watch("videoUrl") || ""}
+                onChange={(value) => form.setValue("videoUrl", value)}
+                uploadRoute="videoUploader"
+              />
             </CardContent>
           </Card>
 
