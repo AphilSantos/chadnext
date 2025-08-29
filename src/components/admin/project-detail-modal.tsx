@@ -53,7 +53,7 @@ export default function ProjectDetailModal({
         value, 
         symbol,
         displayName: card,
-        color: symbol === '♥' || symbol === '♦' ? 'red' : 'black',
+        color: (symbol === '♥' || symbol === '♦' ? 'red' : 'black') as "red" | "black",
         suit: symbol
       };
     });
