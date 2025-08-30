@@ -16,7 +16,6 @@ export default function Navbar({
 }: {
   session: Session;
   headerText: {
-    changelog: string;
     about: string;
     login: string;
     dashboard: string;
@@ -36,12 +35,6 @@ export default function Navbar({
       </Link>
       <div className="hidden items-center gap-12 lg:flex 2xl:gap-16">
         <div className="space-x-4 text-center text-sm leading-loose text-muted-foreground md:text-left">
-          <Link
-            href="/changelog"
-            className="font-semibold hover:underline hover:underline-offset-4"
-          >
-            {headerText.changelog}
-          </Link>
           <Link
             href="/about"
             className="font-semibold hover:underline hover:underline-offset-4"
@@ -79,13 +72,6 @@ export default function Navbar({
         <SheetContent>
           <div className="flex flex-col items-center space-y-10 py-10">
             <div className="space-y-4 text-center text-sm leading-loose text-muted-foreground">
-              <Link
-                href="/changelog"
-                className="block font-semibold hover:underline hover:underline-offset-4"
-                onClick={() => setIsModalOpen(false)}
-              >
-                {headerText.changelog}
-              </Link>
               <Link
                 href="/about"
                 className="block font-semibold hover:underline hover:underline-offset-4"

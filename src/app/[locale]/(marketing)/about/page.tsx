@@ -13,16 +13,16 @@ function AboutCard(about: About) {
 }
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn about the tech stack and inspiration behind ChadNext.",
+  title: "About Poker Edit Pro",
+  description: "Learn about our poker video editing services and mission to help poker players and content creators grow their audience.",
 };
 
 export default function About() {
   return (
     <div className="container min-h-screen py-8">
-      <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">About</h1>
+      <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">About Poker Edit Pro</h1>
       <p className="mb-10 mt-2.5 text-xl text-muted-foreground">
-        Learn about the tech stack and inspiration behind ChadNext.
+        Professional video editing services designed specifically for poker players and content creators.
       </p>
       <div className="space-y-10">
         {abouts.map((p, i) => (

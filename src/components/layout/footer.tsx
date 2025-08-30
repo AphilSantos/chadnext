@@ -110,7 +110,7 @@ export default function Footer() {
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row">
           <div className="flex items-center gap-4">
             <p className="text-sm text-muted-foreground">
-              © 2024 Poker Edit Pro. All rights reserved.
+              © 2025 Poker Edit Pro. All rights reserved.
             </p>
           </div>
 

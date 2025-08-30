@@ -73,21 +73,22 @@ export default async function PaymentsPage() {
               {transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border rounded-lg"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="flex flex-col">
-                      <div className="font-medium">
-                        {transaction.type === "PURCHASE" && "Package Purchase"}
-                        {transaction.type === "CREDIT_PURCHASE" && "Credit Purchase"}
-                        {transaction.type === "PROJECT_PAYMENT" && "Project Payment"}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(new Date(transaction.createdAt), { addSuffix: true })}
-                      </div>
+                  {/* Left side - Transaction details */}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium">
+                      {transaction.type === "PURCHASE" && "Package Purchase"}
+                      {transaction.type === "CREDIT_PURCHASE" && "Credit Purchase"}
+                      {transaction.type === "PROJECT_PAYMENT" && "Project Payment"}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {formatDistanceToNow(new Date(transaction.createdAt), { addSuffix: true })}
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+                  
+                  {/* Right side - Amount, credits, and status */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                     <div className="text-right">
                       <div className="font-medium">
                         ${(transaction.amount / 100).toFixed(2)}
@@ -106,6 +107,7 @@ export default async function PaymentsPage() {
                           ? "secondary"
                           : "destructive"
                       }
+                      className="self-start sm:self-auto"
                     >
                       {transaction.status}
                     </Badge>

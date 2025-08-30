@@ -1,14 +1,15 @@
 export const siteUrl =
-  process.env.NEXT_PUBLIC_APP_URL || "https://chadnext.moinulmoin.com";
+  process.env.NEXT_PUBLIC_APP_URL || "https://pokereditpro.com";
 
 export const siteConfig = (locale: string = "en") => ({
-  name: "ChadNext",
+  name: "Poker Edit Pro | Make Your Poker Videos Go Viral",
   url: siteUrl + "/" + locale,
   ogImage: `${siteUrl}/${locale}/opengraph-image`,
-  description: "Quick Starter Template for your Next project.",
+  description:
+    "Professional video editing services for poker players and content creators. Transform your raw footage into viral-worthy content.",
   links: {
-    twitter: "https://twitter.com/immoinulmoin",
-    github: "https://github.com/moinulmoin/chadnext",
+    twitter: "https://twitter.com/pokereditpro",
+    github: "https://github.com/pokereditpro",
   },
 });
 

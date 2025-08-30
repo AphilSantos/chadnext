@@ -1,19 +1,20 @@
 ---
-title: Tech Stack
+title: Company Overview
 ---
 
-- Language: **[Typescript](https://www.typescriptlang.org/)**
-- Framework: **[Next.js](https://nextjs.org/)**
-- Styling: **[Tailwind CSS](https://tailwindcss.com/)**
-- Component Library: **[Shadcn/ui](https://ui.shadcn.com/)**
-- Database: **[Postgres](https://vercel.com/postgres)**
-- ORM: **[Prisma](https://www.prisma.io/)**
-- Authentication: **[LuciaAuth](https://lucia-auth.com/)**
-- Payment: **[Stripe](https://stripe.com/)**
-- Analytics: **[Umami](https://umami.is/)**
-- Internationalization: **[Next International](https://next-international.vercel.app/)**
-- Deployment: **[Vercel](https://vercel.com/)**
-- Email: **[Resend](https://resend.com/)**
-- Email Template : **[React Email](https://react.email/)**
-- File Storage: **[UploadThing](https://uploadthing.com/)**
-- Linting & Formatting: **[ESLint](https://eslint.org/)** & **[Prettier](https://prettier.io/)**
+**Poker Edit Pro** is a specialized video editing company founded by poker enthusiasts who understand the unique challenges of creating engaging poker content. We're not just video editors - we're part of the poker community, and we've built our business around serving the specific needs of poker players and content creators.
+
+## Our Mission
+
+To democratize professional video editing for the poker community by providing affordable, high-quality editing services that understand the nuances of poker content and what makes it engaging for viewers.
+
+## What Sets Us Apart
+
+- **Poker-Specific Expertise**: Our team includes both professional video editors and poker players
+- **Community-Driven**: We're actively involved in the poker community and stay current with trends
+- **Quality-Focused**: Every project receives the same attention to detail, regardless of size
+- **Accessibility**: Making professional editing accessible to poker players at all levels
+
+## Our Team
+
+Our team combines years of experience in both video production and poker. We understand the technical aspects of video editing and the strategic elements that make poker content successful. This dual expertise allows us to create content that not only looks professional but also resonates with poker audiences.

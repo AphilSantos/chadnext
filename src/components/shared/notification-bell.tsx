@@ -166,7 +166,7 @@ export function NotificationBell({
       </Button>
 
       {isDropdownOpen && (
-        <Card className="absolute right-0 top-12 z-50 w-80 shadow-lg">
+        <Card className="absolute right-[-50px] top-12 z-50 max-h-[calc(100vh-6rem)] w-80 max-w-[calc(100vw-2rem)] overflow-hidden shadow-lg sm:right-0">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm">Notifications</CardTitle>
@@ -183,14 +183,14 @@ export function NotificationBell({
               )}
             </div>
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="max-h-[calc(100vh-12rem)] overflow-y-auto pt-0">
             {unreadCount === 0 ? (
               <div className="py-4 text-center text-muted-foreground">
                 <MessageCircle className="mx-auto mb-2 h-8 w-8 opacity-50" />
                 <p className="text-sm">No unread notifications</p>
               </div>
             ) : (
-              <div className="max-h-64 space-y-2 overflow-y-auto">
+              <div className="space-y-2">
                 {unreadMessages.map((message) => (
                   <div
                     key={message.id}

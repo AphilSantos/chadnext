@@ -73,8 +73,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       creator: "@immoinulmoin",
     },
     icons: {
-      icon: "/favicon.ico",
-      shortcut: "/favicon-16x16.png",
+      icon: "/android-chrome-192x192.png",
+      shortcut: "/android-chrome-192x192.png",
       apple: "/apple-touch-icon.png",
     },
     manifest: `${siteUrl}/manifest.json`,
