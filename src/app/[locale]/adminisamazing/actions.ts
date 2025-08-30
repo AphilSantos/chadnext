@@ -82,8 +82,8 @@ export async function getProjectAnalytics() {
       prisma.project.count({
         where: {
           OR: [
-            { voiceoverUrl: { not: null } },
-            { videoUrl: { not: null } }
+            { voiceoverUrls: { not: "null" } },
+            { videoUrls: { not: "null" } }
           ]
         }
       }),
@@ -139,14 +139,14 @@ export async function exportProjectsData() {
       "User Name": project.user.name || "N/A",
       "User Email": project.user.email,
       "User Credits": project.user.credits,
-      "Voiceover File": project.voiceoverUrl ? "Yes" : "No",
-      "Video File": project.videoUrl ? "Yes" : "No",
+      "Voiceover File": project.voiceoverUrls ? "Yes" : "No",
+      "Video File": project.videoUrls ? "Yes" : "No",
       "Created": project.createdAt.toISOString(),
       "Updated": project.updatedAt.toISOString(),
       "Where Played": project.wherePlayed || "N/A",
       "Stakes": project.stakes || "N/A",
-      "Your Hand": project.yourHand,
-      "Opponent Hand": project.opponentHand,
+      "Player Hands": project.playerHands ? "Yes" : "No",
+      "Number of Players": project.numPlayers,
       "Flop": project.flop,
       "Turn": project.turn || "N/A",
       "River": project.river || "N/A",

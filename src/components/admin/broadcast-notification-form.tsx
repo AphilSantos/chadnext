@@ -20,8 +20,8 @@ import { Bell, Users, UserCheck, Send, Loader2 } from "lucide-react";
 
 interface User {
   id: string;
-  name: string;
-  email: string;
+  name: string | null;
+  email: string | null;
 }
 
 interface BroadcastNotificationFormProps {

@@ -28,6 +28,7 @@ interface Message {
   id: string;
   content: string;
   isFromEditor: boolean;
+  attachments?: any;
   createdAt: Date;
 }
 

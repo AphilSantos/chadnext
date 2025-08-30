@@ -16,10 +16,10 @@ interface BannerContent {
   title: string;
   message: string;
   isActive: boolean;
-  startDate: string;
-  endDate?: string;
-  createdAt: string;
-  updatedAt: string;
+  startDate: Date;
+  endDate?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface BannerContentFormProps {

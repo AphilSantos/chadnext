@@ -29,8 +29,8 @@ async function getDashboardStats() {
     prisma.project.count({
       where: {
         OR: [
-          { voiceoverUrls: { not: null } },
-          { videoUrls: { not: null } }
+          { voiceoverUrls: { not: "null" } },
+          { videoUrls: { not: "null" } }
         ]
       }
     }),

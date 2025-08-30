@@ -35,13 +35,13 @@ export const projectSchema = z.object({
   packageType: z.enum(["SHORT", "FULL", "CREDITS"]),
   wherePlayed: z.string().nullable(),
   stakes: z.string().nullable(),
-  yourHand: z.string().nullable(),
-  opponentHand: z.string().nullable(),
+  numPlayers: z.number().default(2),
   flop: z.string().nullable(),
   turn: z.string().nullable(),
   river: z.string().nullable(),
-  voiceoverUrl: z.string().nullable(),
-  videoUrl: z.string().nullable(),
+  voiceoverUrls: z.array(z.string()).nullable(),
+  videoUrls: z.array(z.string()).nullable(),
+  notes: z.string().nullable(),
 });
 
 export type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -55,13 +55,13 @@ export default function CreateProjectModal() {
       packageType: "SHORT",
       wherePlayed: null,
       stakes: null,
-      yourHand: null,
-      opponentHand: null,
+      numPlayers: 2,
       flop: null,
       turn: null,
       river: null,
-      voiceoverUrl: null,
-      videoUrl: null,
+      voiceoverUrls: null,
+      videoUrls: null,
+      notes: null,
     },
   });
 
@@ -178,35 +178,25 @@ export default function CreateProjectModal() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="yourHand"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Your Hand</FormLabel>
-                    <FormControl>
-                      <Input placeholder="A♠ K♠" {...field} value={field.value || ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="opponentHand"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Opponent&apos;s Hand (if known)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Q♣ Q♦" {...field} value={field.value || ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="numPlayers"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Number of Players</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      placeholder="2" 
+                      {...field} 
+                      value={field.value || 2}
+                      onChange={(e) => field.onChange(parseInt(e.target.value) || 2)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="grid grid-cols-3 gap-4">
               <FormField
@@ -252,35 +242,19 @@ export default function CreateProjectModal() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="voiceoverUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Voiceover URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://drive.google.com/..." {...field} value={field.value || ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="videoUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Video URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://drive.google.com/..." {...field} value={field.value || ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes for Editors</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Any special instructions or notes..." {...field} value={field.value || ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <DialogFooter>
               <Button

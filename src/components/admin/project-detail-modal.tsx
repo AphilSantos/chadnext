@@ -39,11 +39,18 @@ export default function ProjectDetailModal({
 }: ProjectDetailModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
-  const [newStatus, setNewStatus] = useState<"DRAFT" | "SUBMITTED" | "IN_PROGRESS" | "DELIVERED">(project.status);
+  const [newStatus, setNewStatus] = useState<
+    "DRAFT" | "SUBMITTED" | "IN_PROGRESS" | "DELIVERED"
+  >(project.status);
   const [adminNotes, setAdminNotes] = useState(project.adminNotes || "");
 
   const handleStatusChange = (value: string) => {
-    if (value === "DRAFT" || value === "SUBMITTED" || value === "IN_PROGRESS" || value === "DELIVERED") {
+    if (
+      value === "DRAFT" ||
+      value === "SUBMITTED" ||
+      value === "IN_PROGRESS" ||
+      value === "DELIVERED"
+    ) {
       setNewStatus(value);
     }
   };
@@ -54,13 +61,15 @@ export default function ProjectDetailModal({
       const value = card.slice(0, -1);
       const symbol = card.slice(-1);
       // Create a simple display object for the card
-      return { 
+      return {
         id: card,
-        value, 
+        value,
         symbol,
         displayName: card,
-        color: (symbol === '♥' || symbol === '♦' ? 'red' : 'black') as "red" | "black",
-        suit: symbol
+        color: (symbol === "♥" || symbol === "♦" ? "red" : "black") as
+          | "red"
+          | "black",
+        suit: symbol,
       };
     });
   };
@@ -282,17 +291,19 @@ export default function ProjectDetailModal({
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-500">
-                    Your Hand
+                    Number of Players
                   </label>
-                  <CardListDisplay cards={formatCardString(project.yourHand)} />
+                  <p className="text-sm">{project.numPlayers}</p>
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-500">
-                    Opponent&apos;s Hand
+                    Player Hands
                   </label>
-                  <CardListDisplay
-                    cards={formatCardString(project.opponentHand)}
-                  />
+                  <p className="text-sm">
+                    {project.playerHands
+                      ? JSON.stringify(project.playerHands)
+                      : "Not specified"}
+                  </p>
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-500">
@@ -339,94 +350,106 @@ export default function ProjectDetailModal({
                 </TabsList>
 
                 <TabsContent value="voiceover" className="space-y-4">
-                  {project.voiceoverUrl ? (
+                  {project.voiceoverUrls &&
+                  Array.isArray(project.voiceoverUrls) &&
+                  project.voiceoverUrls.length > 0 ? (
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          Voiceover File
-                        </span>
-                        <Badge variant="secondary">Audio</Badge>
-                      </div>
-                      <div className="rounded-lg border bg-gray-50 p-4">
-                        {project.voiceoverUrl.startsWith("http") ? (
-                          <div className="space-y-2">
-                            <p className="text-sm text-gray-600">
-                              File uploaded to external service
-                            </p>
-                            <a
-                              href={project.voiceoverUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="break-all text-sm text-blue-600 hover:text-blue-800"
-                            >
-                              {project.voiceoverUrl}
-                            </a>
+                      {project.voiceoverUrls.map((url, index) => (
+                        <div key={index} className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">
+                              Voiceover File {index + 1}
+                            </span>
+                            <Badge variant="secondary">Audio</Badge>
                           </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <p className="text-sm text-gray-600">
-                              File uploaded directly to server
-                            </p>
-                            <audio controls className="w-full">
-                              <source
-                                src={project.voiceoverUrl}
-                                type="audio/*"
-                              />
-                              Your browser does not support the audio element.
-                            </audio>
+                          <div className="rounded-lg border bg-gray-50 p-4">
+                            {typeof url === "string" &&
+                            url.startsWith("http") ? (
+                              <div className="space-y-2">
+                                <p className="text-sm text-gray-600">
+                                  File uploaded to external service
+                                </p>
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="break-all text-sm text-blue-600 hover:text-blue-800"
+                                >
+                                  {url}
+                                </a>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                <p className="text-sm text-gray-600">
+                                  File uploaded directly to server
+                                </p>
+                                <audio controls className="w-full">
+                                  <source src={url as string} type="audio/*" />
+                                  Your browser does not support the audio
+                                  element.
+                                </audio>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
-                    <div className="py-8 text-center text-gray-500">
-                      <Icons.file className="mx-auto mb-2 h-8 w-8" />
-                      <p>No voiceover file uploaded</p>
-                    </div>
+                    <p className="text-sm text-gray-400">
+                      No voiceover files uploaded
+                    </p>
                   )}
                 </TabsContent>
 
                 <TabsContent value="video" className="space-y-4">
-                  {project.videoUrl ? (
+                  {project.videoUrls &&
+                  Array.isArray(project.videoUrls) &&
+                  project.videoUrls.length > 0 ? (
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          Raw Video File
-                        </span>
-                        <Badge variant="secondary">Video</Badge>
-                      </div>
-                      <div className="rounded-lg border bg-gray-50 p-4">
-                        {project.videoUrl.startsWith("http") ? (
-                          <div className="space-y-2">
-                            <p className="text-sm text-gray-600">
-                              File uploaded to external service
-                            </p>
-                            <a
-                              href={project.videoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="break-all text-sm text-blue-600 hover:text-blue-800"
-                            >
-                              {project.videoUrl}
-                            </a>
+                      {project.videoUrls.map((url, index) => (
+                        <div key={index} className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">
+                              Raw Video File {index + 1}
+                            </span>
+                            <Badge variant="secondary">Video</Badge>
                           </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <p className="text-sm text-gray-600">
-                              File uploaded directly to server
-                            </p>
-                            <video controls className="max-h-64 w-full">
-                              <source src={project.videoUrl} type="video/*" />
-                              Your browser does not support the video element.
-                            </video>
+                          <div className="rounded-lg border bg-gray-50 p-4">
+                            {typeof url === "string" &&
+                            url.startsWith("http") ? (
+                              <div className="space-y-2">
+                                <p className="text-sm text-gray-600">
+                                  File uploaded to external service
+                                </p>
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="break-all text-sm text-blue-600 hover:text-blue-800"
+                                >
+                                  {url}
+                                </a>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                <p className="text-sm text-gray-600">
+                                  File uploaded directly to server
+                                </p>
+                                <video controls className="max-h-64 w-full">
+                                  <source src={url as string} type="video/*" />
+                                  Your browser does not support the video
+                                  element.
+                                </video>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="py-8 text-center text-gray-500">
                       <Icons.file className="mx-auto mb-2 h-8 w-8" />
-                      <p>No video file uploaded</p>
+                      <p>No video files uploaded</p>
                     </div>
                   )}
                 </TabsContent>

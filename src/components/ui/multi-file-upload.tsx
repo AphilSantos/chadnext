@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 import Icons from "../shared/icons";
 import { toast } from "~/hooks/use-toast";
 import { cn } from "~/lib/utils";
+import { Plus } from "lucide-react";
 
 interface MultiFileUploadProps {
   label: string;
@@ -299,7 +300,7 @@ export default function MultiFileUpload({
                 >
                   <input {...getInputProps()} />
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Icons.plus className="h-4 w-4" />
+                    <Plus className="h-4 w-4" />
                     <span>Add more files</span>
                   </div>
                 </div>

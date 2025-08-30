@@ -16,7 +16,7 @@ interface Message {
   id: string;
   content: string;
   isFromEditor: boolean;
-  attachments?: string[] | null;
+  attachments?: any;
   createdAt: Date;
 }
 
@@ -226,20 +226,22 @@ export function ChatInterface({
                   </div>
 
                   {/* Attachments */}
-                  {message.attachments && message.attachments.length > 0 && (
-                    <div className="grid grid-cols-2 gap-2">
-                      {message.attachments.map((url, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={url}
-                            alt={`Attachment ${index + 1}`}
-                            className="h-auto max-w-full cursor-pointer rounded-lg hover:opacity-90"
-                            onClick={() => window.open(url, "_blank")}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {message.attachments &&
+                    Array.isArray(message.attachments) &&
+                    message.attachments.length > 0 && (
+                      <div className="grid grid-cols-2 gap-2">
+                        {message.attachments.map((url: any, index: number) => (
+                          <div key={index} className="relative">
+                            <img
+                              src={url}
+                              alt={`Attachment ${index + 1}`}
+                              className="h-auto max-w-full cursor-pointer rounded-lg hover:opacity-90"
+                              onClick={() => window.open(url, "_blank")}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>

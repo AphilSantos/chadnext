@@ -33,7 +33,7 @@ interface User {
   projectCount: number;
   completedProjects: number;
   totalSpent: number;
-  emailVerified?: boolean;
+  emailVerified?: boolean | null;
 }
 
 interface UserManagementTableProps {

@@ -27,7 +27,7 @@ export default async function ContentPage() {
         </p>
       </div>
 
-      <BannerContentForm currentBanner={currentBanner} />
+      <BannerContentForm currentBanner={currentBanner || undefined} />
 
       <BannerHistory />
     </div>
