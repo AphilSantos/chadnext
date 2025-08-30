@@ -30,13 +30,14 @@ const pokerProjectSchema = z.object({
   packageType: z.enum(["SHORT", "FULL", "CREDITS"]),
   wherePlayed: z.string().nullable(),
   stakes: z.string().nullable(),
-  yourHand: z.string().nullable(),
-  opponentHand: z.string().nullable(),
+  numPlayers: z.number().optional(),
+  playerHands: z.any().nullable(), // JSON field for multiple player hands
   flop: z.string().nullable(),
   turn: z.string().nullable(),
   river: z.string().nullable(),
-  voiceoverUrl: z.string().nullable(),
-  videoUrl: z.string().nullable(),
+  voiceoverUrls: z.any().nullable(), // JSON array for multiple voiceover URLs
+  videoUrls: z.any().nullable(), // JSON array for multiple video URLs
+  notes: z.string().nullable(),
 });
 
 type PokerProjectFormValues = z.infer<typeof pokerProjectSchema>;
@@ -50,16 +51,16 @@ type ProjectWithRelations = {
   userId: string;
   wherePlayed: string | null;
   stakes: string | null;
-  yourHand: string | null;
-  opponentHand: string | null;
+  numPlayers: number;
+  playerHands: any | null; // JSON field
   flop: string | null;
   turn: string | null;
   river: string | null;
-  voiceoverUrl: string | null;
-  videoUrl: string | null;
+  voiceoverUrls: any | null; // JSON array
+  videoUrls: any | null; // JSON array
+  notes: string | null;
   finalVideoUrl: string | null;
   thumbnailUrl: string | null;
-  notes: string | null;
   expiresAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -75,13 +76,14 @@ function convertProjectToFormValues(project: ProjectWithRelations): PokerProject
     packageType: project.packageType,
     wherePlayed: project.wherePlayed,
     stakes: project.stakes,
-    yourHand: project.yourHand,
-    opponentHand: project.opponentHand,
+    numPlayers: project.numPlayers,
+    playerHands: project.playerHands,
     flop: project.flop,
     turn: project.turn,
     river: project.river,
-    voiceoverUrl: project.voiceoverUrl,
-    videoUrl: project.videoUrl,
+    voiceoverUrls: project.voiceoverUrls,
+    videoUrls: project.videoUrls,
+    notes: project.notes,
   };
 }
 
@@ -395,12 +397,12 @@ export default function EditableDetails({
 
               <FormField
                 control={form.control}
-                name="yourHand"
+                name="numPlayers"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Your Hand</FormLabel>
+                    <FormLabel>Number of Players</FormLabel>
                     <FormControl>
-                      <Input placeholder="A♠ K♠" {...field} value={field.value || ""} />
+                      <Input type="number" placeholder="2" {...field} value={field.value || ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -409,12 +411,17 @@ export default function EditableDetails({
 
               <FormField
                 control={form.control}
-                name="opponentHand"
+                name="playerHands"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Opponent&apos;s Hand (if known)</FormLabel>
+                    <FormLabel>Player Hands (JSON)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Q♣ Q♦" {...field} value={field.value || ""} />
+                      <Textarea
+                        placeholder='[{"playerName": "Player 1", "hand": "A♠ K♠"}, {"playerName": "Player 2", "hand": "Q♣ Q♦"}]'
+                        {...field}
+                        value={JSON.stringify(field.value, null, 2)}
+                        onChange={(e) => field.onChange(JSON.parse(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -465,12 +472,17 @@ export default function EditableDetails({
 
               <FormField
                 control={form.control}
-                name="voiceoverUrl"
+                name="voiceoverUrls"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Voiceover URL</FormLabel>
+                    <FormLabel>Voiceover URLs (JSON)</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://drive.google.com/..." {...field} value={field.value || ""} />
+                      <Textarea
+                        placeholder='["https://drive.google.com/file/d/1234567890abcdef1234567890abcdef/view?usp=sharing", "https://drive.google.com/file/d/1234567890abcdef1234567890abcdef/view?usp=sharing"]'
+                        {...field}
+                        value={JSON.stringify(field.value, null, 2)}
+                        onChange={(e) => field.onChange(JSON.parse(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -479,12 +491,31 @@ export default function EditableDetails({
 
               <FormField
                 control={form.control}
-                name="videoUrl"
+                name="videoUrls"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Video URL</FormLabel>
+                    <FormLabel>Video URLs (JSON)</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://drive.google.com/..." {...field} value={field.value || ""} />
+                      <Textarea
+                        placeholder='["https://drive.google.com/file/d/1234567890abcdef1234567890abcdef/view?usp=sharing", "https://drive.google.com/file/d/1234567890abcdef1234567890abcdef/view?usp=sharing"]'
+                        {...field}
+                        value={JSON.stringify(field.value, null, 2)}
+                        onChange={(e) => field.onChange(JSON.parse(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Additional notes for the editor..." {...field} value={field.value || ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

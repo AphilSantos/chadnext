@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import Icons from "~/components/shared/icons";
+import { NotificationBell } from "~/components/shared/notification-bell";
 import { destroyAdminSession } from "~/lib/server/auth/admin";
 
 export default function AdminHeader() {
@@ -28,6 +29,7 @@ export default function AdminHeader() {
         </div>
 
         <div className="flex items-center space-x-4">
+          <NotificationBell isAdmin={true} />
           <div className="text-right">
             <p className="text-sm font-medium text-gray-900">Administrator</p>
             <p className="text-xs text-gray-500">Super Admin</p>

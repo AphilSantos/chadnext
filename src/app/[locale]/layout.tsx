@@ -2,7 +2,7 @@ import { type Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
-import { AnnouncementBanner } from "~/components/announcement-banner";
+import { DynamicBanner } from "~/components/shared/dynamic-banner";
 import Footer from "~/components/layout/footer";
 import Header from "~/components/layout/header";
 import ThemeProvider from "~/components/shared/theme-provider";
@@ -131,8 +131,8 @@ export default async function RootLayout({
           fontHeading.variable
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AnnouncementBanner />
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <DynamicBanner />
           <Header />
           <main>
             {children}

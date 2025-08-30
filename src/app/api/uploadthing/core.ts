@@ -54,6 +54,22 @@ export const ourFileRouter = {
       console.log("audio file url", file.url);
       return { url: file.url };
     }),
+
+  // Message attachments uploader for chat images
+  messageAttachments: f({ image: { maxFileSize: "4MB", maxFileCount: 5 } })
+    .middleware(async ({ req }) => {
+      const { user, session } = await getCurrentSession();
+      if (!session) throw new UploadThingError("Unauthorized");
+      return { userId: user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log(
+        "Message attachment upload complete for userId:",
+        metadata.userId
+      );
+      console.log("attachment file url", file.url);
+      return { url: file.url };
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

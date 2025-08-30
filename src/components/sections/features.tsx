@@ -13,7 +13,7 @@ export default function Features() {
       icon: Icons.award,
       title: "Professional Quality",
       description:
-        "Hollywood-level editing with dramatic music, smooth transitions, and cinematic effects that make your hands look epic.",
+        "We have combined decades of poker knowledge and social media experience to ensure you are delivering impactful content.",
     },
     {
       icon: Icons.upload,

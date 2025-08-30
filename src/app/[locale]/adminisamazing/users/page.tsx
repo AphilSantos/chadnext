@@ -14,6 +14,7 @@ async function getUsers() {
       name: true,
       email: true,
       credits: true,
+      emailVerified: true,
       createdAt: true,
       projects: {
         select: {

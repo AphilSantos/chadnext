@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import LogoutButton from "~/components/shared/logout-button";
+import { NotificationBell } from "~/components/shared/notification-bell";
 import { buttonVariants } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { cn } from "~/lib/utils";
@@ -50,16 +51,19 @@ export default function Navbar({
         </div>
         <div className="flex items-center gap-x-2">
           {session ? (
-            <Link
-              href="/dashboard"
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "bg-secondary"
-              )}
-              onClick={() => setIsModalOpen(false)}
-            >
-              {headerText.dashboard}
-            </Link>
+            <>
+              <NotificationBell userId={session.userId} />
+              <Link
+                href="/dashboard"
+                className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "bg-secondary"
+                )}
+                onClick={() => setIsModalOpen(false)}
+              >
+                {headerText.dashboard}
+              </Link>
+            </>
           ) : (
             <Link href="/login" className={buttonVariants()}>
               {headerText.login}
@@ -91,6 +95,10 @@ export default function Navbar({
               </Link>
               {session ? (
                 <>
+                  <div className="flex items-center justify-center gap-2">
+                    <NotificationBell userId={session.userId} />
+                    <span className="text-sm">Notifications</span>
+                  </div>
                   <Link
                     href="/dashboard"
                     className="block font-semibold hover:underline hover:underline-offset-4"

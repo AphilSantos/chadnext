@@ -44,7 +44,7 @@ export default async function Hero() {
             Turn Your Poker Hands Into
             <br />
             <span className="animate-gradient bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Pro Videos
+              VIRAL VIDEOS
             </span>
           </h1>
 
@@ -52,9 +52,8 @@ export default async function Hero() {
             className="animate-fade-in-up mt-6 text-balance text-center text-muted-foreground md:text-xl"
             style={{ animationDelay: "0.3s" }}
           >
-            Submit your raw footage and hand details. Our professional editors
-            will create stunning videos perfect for social media, analysis, and
-            sharing your best plays.
+            Submit your raw footage and hand details. Our team will edit and
+            polish for you to post.
           </p>
 
           <div

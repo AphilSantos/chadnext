@@ -19,6 +19,10 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { formatDistanceToNow } from "date-fns";
+import { ManageCreditsDialog } from "./manage-credits-dialog";
+import { UserProfileDialog } from "./user-profile-dialog";
+import { EditUserDialog } from "./edit-user-dialog";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -29,6 +33,7 @@ interface User {
   projectCount: number;
   completedProjects: number;
   totalSpent: number;
+  emailVerified?: boolean;
 }
 
 interface UserManagementTableProps {
@@ -38,21 +43,11 @@ interface UserManagementTableProps {
 export default function UserManagementTable({
   users,
 }: UserManagementTableProps) {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
-  const handleManageCredits = (user: User) => {
-    setSelectedUser(user);
-    // TODO: Open credit management modal
-  };
-
-  const handleViewProfile = (userId: string) => {
-    // TODO: Navigate to user profile
-    console.log("View profile for user:", userId);
-  };
+  const router = useRouter();
 
   const handleSendMessage = (userId: string) => {
-    // TODO: Open chat with user
-    console.log("Send message to user:", userId);
+    // Navigate to admin chat page
+    router.push("/en/adminisamazing/chat");
   };
 
   return (
@@ -123,26 +118,47 @@ export default function UserManagementTable({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleManageCredits(user)}>
-                      <Icons.creditCard className="mr-2 h-4 w-4" />
-                      Manage Credits
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleViewProfile(user.id)}
-                    >
-                      <Icons.user className="mr-2 h-4 w-4" />
-                      View Profile
-                    </DropdownMenuItem>
+                    <ManageCreditsDialog
+                      userId={user.id}
+                      userName={user.name || "Unknown User"}
+                      currentCredits={user.credits}
+                      trigger={
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <Icons.creditCard className="mr-2 h-4 w-4" />
+                          Manage Credits
+                        </DropdownMenuItem>
+                      }
+                    />
+                    <UserProfileDialog
+                      userId={user.id}
+                      trigger={
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <Icons.user className="mr-2 h-4 w-4" />
+                          View Profile
+                        </DropdownMenuItem>
+                      }
+                    />
                     <DropdownMenuItem
                       onClick={() => handleSendMessage(user.id)}
                     >
                       <Icons.messageCircle className="mr-2 h-4 w-4" />
                       Send Message
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Icons.edit className="mr-2 h-4 w-4" />
-                      Edit User
-                    </DropdownMenuItem>
+                    <EditUserDialog
+                      user={{
+                        id: user.id,
+                        name: user.name || "",
+                        email: user.email || "",
+                        emailVerified: user.emailVerified || false,
+                        credits: user.credits,
+                      }}
+                      trigger={
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <Icons.edit className="mr-2 h-4 w-4" />
+                          Edit User
+                        </DropdownMenuItem>
+                      }
+                    />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

@@ -12,13 +12,14 @@ interface CreateProjectPayload {
   packageType: PackageType;
   wherePlayed?: string | null;
   stakes?: string | null;
-  yourHand?: string | null;
-  opponentHand?: string | null;
+  numPlayers: number;
+  playerHands?: Record<string, string> | null; // { "player1Hand": "A♠ K♥", "player2Hand": "Q♦ J♣", ... }
   flop?: string | null;
   turn?: string | null;
   river?: string | null;
-  voiceoverUrl?: string | null;
-  videoUrl?: string | null;
+  voiceoverUrls?: string[] | null; // Array of voiceover URLs
+  videoUrls?: string[] | null; // Array of video URLs
+  notes?: string | null; // Notes for editors
 }
 
 export async function checkIfFreePlanLimitReached() {

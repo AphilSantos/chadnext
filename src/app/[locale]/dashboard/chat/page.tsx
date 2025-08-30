@@ -89,11 +89,11 @@ export default async function ChatPage() {
                     </p>
                   )}
                   <Link
-                    href={`/dashboard/projects/${project.id}`}
+                    href={`/dashboard/projects/${project.id}/chat`}
                     className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                   >
                     View Chat
-                    <Icons.arrowRight className="h-4 w-4" />
+                    <Icons.chevronRight className="h-4 w-4" />
                   </Link>
                 </CardContent>
               </Card>

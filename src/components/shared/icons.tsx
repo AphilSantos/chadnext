@@ -76,6 +76,7 @@ const Icons = {
   post: FileText,
   page: File,
   media: Image,
+  image: Image,
   settings: Settings,
   billing: CreditCard,
   creditCard: CreditCard,
@@ -233,7 +234,6 @@ const Icons = {
       <polyline points="14,2 14,8 20,8" />
     </svg>
   ),
-
 };
 
 export default Icons;

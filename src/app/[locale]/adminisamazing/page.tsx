@@ -29,8 +29,8 @@ async function getDashboardStats() {
     prisma.project.count({
       where: {
         OR: [
-          { voiceoverUrl: { not: null } },
-          { videoUrl: { not: null } }
+          { voiceoverUrls: { not: null } },
+          { videoUrls: { not: null } }
         ]
       }
     }),
@@ -326,13 +326,13 @@ export default async function AdminDashboard() {
                     {project.packageType}
                   </Badge>
                   <div className="flex space-x-1">
-                    {project.voiceoverUrl && (
+                    {project.voiceoverUrls && (
                       <Badge variant="secondary" className="text-xs">
                         <Icons.file className="mr-1 h-3 w-3" />
                         Audio
                       </Badge>
                     )}
-                    {project.videoUrl && (
+                    {project.videoUrls && (
                       <Badge variant="secondary" className="text-xs">
                         <Icons.file className="mr-1 h-3 w-3" />
                         Video

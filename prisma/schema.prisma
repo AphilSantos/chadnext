@@ -38,6 +38,7 @@ model User {
   projects               Project[]
   emailVerificationCodes EmailVerificationCode[]
   transactions           Transaction[]
+  userNotifications      UserNotification[]
   credits                Int                     @default(0)
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
@@ -60,20 +61,22 @@ model Project {
   // Poker hand details
   wherePlayed String?
   stakes      String?
-  yourHand    String?
-  opponentHand String?
+  numPlayers  Int           @default(2)
+  playerHands Json?         // Store as JSON: { "player1Hand": "A♠ K♥", "player2Hand": "Q♦ J♣", ... }
   flop        String?
   turn        String?
   river       String?
   
-  // Files
-  voiceoverUrl String?
-  videoUrl     String?
+  // Files - now support multiple files
+  voiceoverUrls Json?       // Store as JSON array: ["url1", "url2", ...]
+  videoUrls     Json?       // Store as JSON array: ["url1", "url2", ...]
+  
+  // Notes for editors
+  notes       String?
   
   // Delivery
   finalVideoUrl String?
   thumbnailUrl  String?
-  notes         String?
   
   // Expiration for drafts
   expiresAt     DateTime?
@@ -95,8 +98,47 @@ model Message {
   projectId String
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   isFromEditor Boolean @default(false)
+  attachments Json?  // Store as JSON array: ["url1", "url2", ...]
+  isRead    Boolean  @default(false)
   
   createdAt DateTime @default(now())
+}
+
+model BroadcastNotification {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  type      BroadcastType @default(ANNOUNCEMENT)
+  targetType TargetType @default(ALL_USERS)
+  targetUserIds Json? // Store as JSON array: ["userId1", "userId2", ...] for SELECTED_USERS
+  
+  userNotifications UserNotification[]
+  createdAt DateTime @default(now())
+}
+
+model UserNotification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  broadcastNotificationId String
+  broadcastNotification BroadcastNotification @relation(fields: [broadcastNotificationId], references: [id], onDelete: Cascade)
+  isRead    Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, broadcastNotificationId])
+}
+
+model BannerContent {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  isActive  Boolean  @default(true)
+  startDate DateTime @default(now())
+  endDate   DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Transaction {
@@ -140,4 +182,17 @@ enum TransactionStatus {
   COMPLETED
   FAILED
   REFUNDED
+}
+
+enum BroadcastType {
+  ANNOUNCEMENT
+  UPDATE
+  MAINTENANCE
+  FEATURE
+}
+
+enum TargetType {
+  ALL_USERS
+  SELECTED_USERS
+  ACTIVE_USERS
 }
